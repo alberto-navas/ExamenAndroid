@@ -8,12 +8,12 @@ plugins {
 
 android {
     namespace = "com.example.examenfirebasenavasalberto"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.examenfirebasenavasalberto"
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 
@@ -64,9 +64,11 @@ dependencies {
 
     // ViewModel y Coil
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
-    implementation(libs.androidx.lifecycle.viewmodel.compose)
-    implementation(libs.coil.compose)
-    implementation(libs.coil.network)
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.4")
+
+
+    implementation("io.coil-kt.coil3:coil-compose:3.2.0")
+    implementation("io.coil-kt.coil3:coil-network-okhttp:3.2.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

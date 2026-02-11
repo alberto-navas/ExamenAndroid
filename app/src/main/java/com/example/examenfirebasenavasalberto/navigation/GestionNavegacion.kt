@@ -1,45 +1,52 @@
 package com.example.examenfirebasenavasalberto.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
-import com.example.examenfirebasenavasalberto.screens.*
+import com.example.examenfirebasenavasalberto.screens.DetalleJugadorScreen
+import com.example.examenfirebasenavasalberto.screens.HomeScreen
+import com.example.examenfirebasenavasalberto.screens.LoginScreen
+import com.example.examenfirebasenavasalberto.screens.NuevoJugadorScreen
 import com.example.examenfirebasenavasalberto.viewmodel.AuthViewModel
 import com.example.examenfirebasenavasalberto.viewmodel.JugadorViewModel
 
 @Composable
 fun GestionNavegacion() {
-    // Instancia de los ViewModels siguiendo la arquitectura MVVM
     val authViewModel: AuthViewModel = viewModel()
     val jugadorViewModel: JugadorViewModel = viewModel()
-
-    // Si ya hay un usuario logueado, empezamos en Home, si no en Login
+    
     val startRoute = if (authViewModel.userEmail.value != null) Routes.Home else Routes.Login
     val backStack = rememberNavBackStack(startRoute)
 
     NavDisplay(
         backStack = backStack,
-        onBack = { backStack.removeLastOrNull() },
+        onBack = {
+            if (backStack.size > 1) {
+                backStack.removeAt(backStack.size - 1)
+            }
+        },
         entryProvider = { key ->
-            when (key) {
-                is Routes.Login -> NavEntry(key) {
+            // Forzamos el cast a Routes para que el 'when' sea exhaustivo
+            when (val route = key as Routes) {
+                is Routes.Login -> NavEntry(route) {
                     LoginScreen(
                         authViewModel = authViewModel,
                         onLoginSuccess = {
-                            while (backStack.isNotEmpty()) backStack.removeLastOrNull()
+                            backStack.clear()
                             backStack.add(Routes.Home)
                         }
                     )
                 }
 
-                is Routes.Home -> NavEntry(key) {
+                is Routes.Home -> NavEntry(route) {
                     HomeScreen(
                         userEmail = authViewModel.userEmail.value ?: "Usuario",
                         onLogout = {
                             authViewModel.signOut {
-                                while (backStack.isNotEmpty()) backStack.removeLastOrNull()
+                                backStack.clear()
                                 backStack.add(Routes.Login)
                             }
                         },
@@ -49,19 +56,25 @@ fun GestionNavegacion() {
                     )
                 }
 
-                is Routes.NuevoJugador -> NavEntry(key) {
+                is Routes.NuevoJugador -> NavEntry(route) {
                     NuevoJugadorScreen(
                         jugadorViewModel = jugadorViewModel,
-                        onNavigateBack = { backStack.removeLastOrNull() }
+                        onNavigateBack = { backStack.removeAt(backStack.size - 1) }
                     )
                 }
 
-                is Routes.DetalleJugador -> NavEntry(key) {
-                    val jugador = jugadorViewModel.jugadores.value.find { it.id == key.id }
+                is Routes.DetalleJugador -> NavEntry(route) {
+                    val jugador = jugadorViewModel.jugadores.value.find { it.id == route.id }
                     if (jugador != null) {
-                        DetalleJugadorScreen(jugador = jugador, onNavigateBack = { backStack.removeLastOrNull() })
+                        DetalleJugadorScreen(
+                            jugador = jugador,
+                            onNavigateBack = { backStack.removeAt(backStack.size - 1) }
+                        )
                     } else {
-                        backStack.removeLastOrNull()
+                        // Si el jugador no se encuentra, volvemos atrás como un efecto secundario
+                        LaunchedEffect(Unit) {
+                            if (backStack.size > 1) backStack.removeAt(backStack.size - 1)
+                        }
                     }
                 }
             }
