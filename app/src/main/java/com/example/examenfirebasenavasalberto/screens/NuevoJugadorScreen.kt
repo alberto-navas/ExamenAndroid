@@ -8,6 +8,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.examenfirebasenavasalberto.viewmodel.JugadorViewModel
 
@@ -63,7 +64,10 @@ fun NuevoJugadorScreen(
                         onNavigateBack()
                     }
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF27D21F),
+                    contentColor = Color.White)
             ) {
                 Text("Añadir Jugador")
             }
