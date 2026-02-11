@@ -1,13 +1,16 @@
 package com.example.examenfirebasenavasalberto.screens
 
-import android.R
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import com.example.examenfirebasenavasalberto.R
 import com.example.examenfirebasenavasalberto.viewmodel.AuthViewModel
 
 @Composable
@@ -29,17 +32,27 @@ fun LoginScreen(
     }
 
     Scaffold(
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+        containerColor = Color(0xFFF2FCEE)
     ) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(16.dp),
+                .padding(24.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Image(
+                painter = painterResource(id = R.drawable.logo),
+                contentDescription = "Logo Unicaja",
+                modifier = Modifier.size(150.dp)
+            )
+            
+            Spacer(modifier = Modifier.height(32.dp))
+            
             Text(text = "Unicaja Login", style = MaterialTheme.typography.headlineLarge)
+            
             Spacer(modifier = Modifier.height(32.dp))
 
             OutlinedTextField(
@@ -65,7 +78,11 @@ fun LoginScreen(
             } else {
                 Button(
                     onClick = { authViewModel.signIn(email, password, onLoginSuccess) },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF27D21F),
+                        contentColor = Color.White
+                    )
                 ) {
                     Text("Entrar")
                 }
